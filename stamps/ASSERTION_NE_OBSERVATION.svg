@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="200" viewBox="0 0 640 200">
+  <rect width="640" height="200" rx="16" fill="#0d0f12"/>
+  <rect x="8" y="8" width="624" height="184" rx="12" fill="none" stroke="#9b6bff" stroke-width="6"/>
+  <text x="320" y="115" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-size="36" font-weight="700" fill="#9b6bff">ASSERTION ≠ OBSERVATION</text>
+</svg>
