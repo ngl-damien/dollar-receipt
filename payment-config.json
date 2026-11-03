@@ -1,0 +1,19 @@
+{
+  "schema": "ngl.microproduct.payment.v1",
+  "product": "Receipt Card + Stamp Pack",
+  "price_usd": 1,
+  "note": "ETH and SOL are direct receive addresses. BTC/DOGE/LTC values provided as account xpubs \u2014 derive a fresh receive address in your wallet for each sale or publish a static receive address derived from the xpub.",
+  "deposit": {
+    "ETH": "0xf3626482a0013E63F124bfD6897f1b372F2EA883",
+    "SOL": "7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe"
+  },
+  "xpub_custody_only_do_not_send_here": {
+    "BTC": "xpub6D73N6Td4dNJ8JpZdN2wwmov9An3eJypsGLVod7nGPK9EVvKn7p9wRKomc9d338ppntKMKA7MrsYpGTDVa8y9yYqNDNgVtCJ4q3xYcNW2vA",
+    "DOGE": "xpub6BsoPxD3rRfgCP8GCaic9WqS6g7cra2npfjM1GoHW1ZY9g9kGwRY3bpxciCizdoo6QM7mdzX5wHGRgKU4igtdChDmYttJ9W6CrLR2UpQyBD",
+    "LTC": "xpub6Ci1qrk8H3MeVFaQ6338bN6uMZPo5JRiHgLg2gDU57b8xhJW3GKK343JBKvHydCpJSwoiwHocnkf5dfFMdFimQGLHfVLA8RvR9L27GxmLDd"
+  },
+  "amount_hint": {
+    "ETH": "~$1 USD in ETH at time of payment",
+    "SOL": "~$1 USD in SOL at time of payment"
+  }
+}
