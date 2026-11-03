@@ -3,135 +3,95 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>$1 Receipt Card — paste text, get a hash</title>
+<title>$1 Receipt — pay ETH or SOL</title>
 <style>
-:root{font-family:ui-sans-serif,system-ui,sans-serif;background:#0b0d10;color:#e8eaed}
-body{max-width:42rem;margin:0 auto;padding:1.25rem}
-h1{font-size:1.5rem;margin:0.2rem 0}
-.muted{color:#9aa3ad;font-size:0.92rem}
-textarea{width:100%;min-height:8rem;background:#14181e;color:#e8eaed;border:1px solid #2a3038;border-radius:8px;padding:0.75rem;box-sizing:border-box}
-button,.btn{background:#2d6a4f;color:#fff;border:0;border-radius:8px;padding:0.6rem 1rem;font-weight:600;cursor:pointer}
-button.secondary{background:#2a3038}
+:root{font-family:system-ui,sans-serif;background:#0b0d10;color:#e8eaed}
+body{max-width:42rem;margin:0 auto;padding:1.25rem;line-height:1.45}
+h1{font-size:1.45rem}
+.muted{color:#9aa3ad;font-size:.92rem}
+textarea{width:100%;min-height:7rem;background:#14181e;color:#eee;border:1px solid #2a3038;border-radius:8px;padding:.75rem;box-sizing:border-box}
+button{background:#2d6a4f;color:#fff;border:0;border-radius:8px;padding:.55rem 1rem;font-weight:600;cursor:pointer;margin:.25rem .25rem 0 0}
+button.sec{background:#2a3038}
 .card{border:1px solid #2a3038;border-radius:12px;padding:1rem;margin:1rem 0;background:#12151a}
-#out{font-family:ui-monospace,monospace;font-size:0.8rem;word-break:break-all}
-.addr{font-family:ui-monospace,monospace;font-size:0.78rem;word-break:break-all;background:#1a1e24;padding:0.5rem;border-radius:6px}
-.row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.5rem}
-.stamp{border:1px solid #333;border-radius:8px;margin:0.25rem;max-width:100%}
-.price{font-size:1.75rem;font-weight:700}
-.warn{color:#e6b35a}
-.ok{color:#8fd6a0}
+.addr{font-family:ui-monospace,monospace;font-size:.78rem;word-break:break-all;background:#1a1e24;padding:.6rem;border-radius:6px;margin:.35rem 0}
+.ok{color:#8fd6a0}.warn{color:#e6b35a}
+.price{font-size:1.8rem;font-weight:700}
+#out{font-family:ui-monospace,monospace;font-size:.78rem;word-break:break-all;white-space:pre-wrap}
 </style>
 </head>
 <body>
-<p class="muted">Impulse utility · not legal advice · not professional attestation</p>
-<h1>Paste → hash receipt</h1>
-<p class="muted">Free. Runs in your browser. Nothing uploaded.</p>
+<p class="muted">ngl-damien · impulse utility · not legal advice</p>
+<h1>Paste text → hash receipt</h1>
+<p class="muted">Free. Runs only in your browser. Nothing is uploaded.</p>
 <textarea id="t" placeholder="Paste any text…"></textarea>
-<div class="row">
+<div>
   <button id="go">Make receipt</button>
-  <button class="secondary" id="dl" disabled>Download JSON</button>
-  <button class="secondary" id="png" disabled>Download card PNG</button>
+  <button class="sec" id="dl" disabled>Download JSON</button>
+  <button class="sec" id="png" disabled>Download PNG</button>
 </div>
 <div class="card" id="card" hidden>
-  <div class="muted">RECEIPT CARD</div>
+  <div class="muted">RECEIPT</div>
   <div id="out"></div>
-  <canvas id="cv" width="640" height="280" style="max-width:100%;margin-top:0.75rem;border-radius:8px"></canvas>
+  <canvas id="cv" width="640" height="280" style="max-width:100%;margin-top:.75rem;border-radius:8px"></canvas>
 </div>
 
 <div class="card">
   <div class="price">$1</div>
-  <p>Stamp pack — 12 SVG badges (PROPOSED, VERIFIED, CHECK THE RECEIPT, …) for screenshots and posts.</p>
-  <p class="muted">Pay <strong>~$1 USD</strong> in <strong>ETH</strong> or <strong>SOL</strong> to the address below. Then download the pack (honor system for v0 — low friction).</p>
-  <p><strong>ETH</strong></p>
-  <div class="addr" id="eth"></div>
+  <p>Stamp pack (SVG badges). Pay <strong>~$1 USD</strong> then download.</p>
+  <p><strong>ETH</strong> (send ~$1 equivalent)</p>
+  <div class="addr">0xf3626482a0013E63F124bfD6897f1b372F2EA883</div>
+  <button class="sec" type="button" onclick="navigator.clipboard.writeText('0xf3626482a0013E63F124bfD6897f1b372F2EA883')">Copy ETH</button>
   <p><strong>SOL</strong></p>
-  <div class="addr" id="sol"></div>
-  <p class="warn" id="live"></p>
-  <div class="row">
-    <button id="pack">Download stamp pack ($1)</button>
-  </div>
-  <p class="muted">BTC/DOGE/LTC were provided as <em>xpubs</em> (account keys), not deposit addresses — do not send to an xpub string. Use ETH/SOL until static receive addresses are derived.</p>
+  <div class="addr">7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe</div>
+  <button class="sec" type="button" onclick="navigator.clipboard.writeText('7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe')">Copy SOL</button>
+  <p class="ok">Payments go to the Founder addresses above.</p>
+  <button id="pack">Download stamp pack</button>
+  <p class="warn muted">BTC/DOGE/LTC xpubs are not receive addresses — use ETH or SOL for now.</p>
 </div>
-
-<p class="muted">Assertion ≠ observation. A hash proves the bytes you pasted, not the truth of the world.</p>
+<p class="muted">Assertion ≠ observation. A hash is not worldly truth.</p>
 <script>
-const STAMPS = [{"name": "ASSERTION_NE_OBSERVATION", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzliNmJmZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOWI2YmZmIj5BU1NFUlRJT04g4omgIE9CU0VSVkFUSU9OPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "CHECK_THE_RECEIPT", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzViOGRlZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNWI4ZGVmIj5DSEVDSyBUSEUgUkVDRUlQVDwvdGV4dD4KPC9zdmc+Cg=="}, {"name": "HAND_TO_CLIENT", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJhOWQ4ZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMmE5ZDhmIj5IQU5EIFRPIENMSUVOVDwvdGV4dD4KPC9zdmc+Cg=="}, {"name": "MODEL_SAID_SO", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzY2NiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNjY2Ij5NT0RFTCBTQUlEIFNPIOKJoCBQUk9PRjwvdGV4dD4KPC9zdmc+Cg=="}, {"name": "NO_GAS", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjODg4Ij5OTyBHQVMuIEpVU1QgR08uPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "OFFLINE_OK", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzQ1N2I5ZCIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNDU3YjlkIj5PRkZMSU5FIE9LPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "ONE_DOLLAR_TRUTH", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2U3NmY1MSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZTc2ZjUxIj4kMSBUUlVUSCBVVElMSVRZPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "PROPOSED", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2U2YjM1YSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZTZiMzVhIj5QUk9QT1NFRDwvdGV4dD4KPC9zdmc+Cg=="}, {"name": "RECEIPT_REQUIRED", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2Q0YTAxNyIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjZDRhMDE3Ij5SRUNFSVBUIFJFUVVJUkVEPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "REFUTED", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M0NGM0YyIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjYzQ0YzRjIj5SRUZVVEVEPC90ZXh0Pgo8L3N2Zz4K"}, {"name": "UNVERIFIABLE", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzdhN2E5YSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjN2E3YTlhIj5VTlZFUklGSUFCTEU8L3RleHQ+Cjwvc3ZnPgo="}, {"name": "VERIFIED", "svg_b64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNjQwIDIwMCI+CiAgPHJlY3Qgd2lkdGg9IjY0MCIgaGVpZ2h0PSIyMDAiIHJ4PSIxNiIgZmlsbD0iIzBkMGYxMiIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSI2MjQiIGhlaWdodD0iMTg0IiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzNkOWE2YSIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHRleHQgeD0iMzIwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjM2IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjM2Q5YTZhIj5WRVJJRklFRDwvdGV4dD4KPC9zdmc+Cg=="}];
-
+const STAMPS = [{"name": "ASSERTION_NE_OBSERVATION", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#9b6bff\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#9b6bff\">ASSERTION \u2260 OBSERVATION</text>\n</svg>\n"}, {"name": "CHECK_THE_RECEIPT", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#5b8def\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#5b8def\">CHECK THE RECEIPT</text>\n</svg>\n"}, {"name": "HAND_TO_CLIENT", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#2a9d8f\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#2a9d8f\">HAND TO CLIENT</text>\n</svg>\n"}, {"name": "MODEL_SAID_SO", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#666\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#666\">MODEL SAID SO \u2260 PROOF</text>\n</svg>\n"}, {"name": "NO_GAS", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#888\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#888\">NO GAS. JUST GO.</text>\n</svg>\n"}, {"name": "OFFLINE_OK", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#457b9d\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#457b9d\">OFFLINE OK</text>\n</svg>\n"}, {"name": "ONE_DOLLAR_TRUTH", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#e76f51\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#e76f51\">$1 TRUTH UTILITY</text>\n</svg>\n"}, {"name": "PROPOSED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#e6b35a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#e6b35a\">PROPOSED</text>\n</svg>\n"}, {"name": "RECEIPT_REQUIRED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#d4a017\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#d4a017\">RECEIPT REQUIRED</text>\n</svg>\n"}, {"name": "REFUTED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#c44c4c\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#c44c4c\">REFUTED</text>\n</svg>\n"}, {"name": "UNVERIFIABLE", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#7a7a9a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#7a7a9a\">UNVERIFIABLE</text>\n</svg>\n"}, {"name": "VERIFIED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#3d9a6a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#3d9a6a\">VERIFIED</text>\n</svg>\n"}];
 async function sha256(text){
-  const data = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest('SHA-256', data);
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-
-let last = null;
+let last=null;
 document.getElementById('go').onclick = async () => {
   const text = document.getElementById('t').value;
   const hash = await sha256(text);
   const at = new Date().toISOString();
-  last = { schema:'ngl.receipt-card.v1', algorithm:'SHA-256', hash, byte_length: new TextEncoder().encode(text).length, at, note:'Browser-local hash. Not a court document.' };
-  document.getElementById('card').hidden = false;
-  document.getElementById('out').textContent = JSON.stringify(last, null, 2);
-  document.getElementById('dl').disabled = false;
-  document.getElementById('png').disabled = false;
-  // draw card
-  const cv = document.getElementById('cv');
-  const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#0d0f12'; ctx.fillRect(0,0,640,280);
-  ctx.strokeStyle = '#3d9a6a'; ctx.lineWidth = 4; ctx.strokeRect(12,12,616,256);
-  ctx.fillStyle = '#8fd6a0'; ctx.font = 'bold 22px sans-serif'; ctx.fillText('RECEIPT CARD', 32, 48);
-  ctx.fillStyle = '#9aa3ad'; ctx.font = '14px monospace'; ctx.fillText(at, 32, 72);
-  ctx.fillStyle = '#e8eaed'; ctx.font = '13px monospace';
-  const h = hash;
-  ctx.fillText(h.slice(0,32), 32, 120);
-  ctx.fillText(h.slice(32), 32, 140);
-  ctx.fillStyle = '#9aa3ad'; ctx.font = '12px sans-serif';
-  ctx.fillText('SHA-256 · ' + last.byte_length + ' bytes · local only', 32, 180);
-  ctx.fillText('Assertion ≠ observation', 32, 220);
+  last = {schema:'ngl.receipt-card.v1', algorithm:'SHA-256', hash, byte_length:new TextEncoder().encode(text).length, at};
+  document.getElementById('card').hidden=false;
+  document.getElementById('out').textContent=JSON.stringify(last,null,2);
+  document.getElementById('dl').disabled=false;
+  document.getElementById('png').disabled=false;
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  ctx.fillStyle='#0d0f12'; ctx.fillRect(0,0,640,280);
+  ctx.strokeStyle='#3d9a6a'; ctx.lineWidth=4; ctx.strokeRect(12,12,616,256);
+  ctx.fillStyle='#8fd6a0'; ctx.font='bold 22px sans-serif'; ctx.fillText('RECEIPT CARD',32,48);
+  ctx.fillStyle='#9aa3ad'; ctx.font='14px monospace'; ctx.fillText(at,32,72);
+  ctx.fillStyle='#e8eaed'; ctx.font='13px monospace';
+  ctx.fillText(hash.slice(0,32),32,120); ctx.fillText(hash.slice(32),32,140);
+  ctx.fillStyle='#9aa3ad'; ctx.font='12px sans-serif';
+  ctx.fillText('SHA-256 · '+last.byte_length+' bytes · local only',32,180);
+  ctx.fillText('Assertion ≠ observation',32,220);
 };
-
-document.getElementById('dl').onclick = () => {
-  if(!last) return;
-  const blob = new Blob([JSON.stringify(last,null,2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'receipt-card.json';
-  a.click();
+document.getElementById('dl').onclick=()=>{
+  if(!last)return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(last,null,2)],{type:'application/json'}));
+  a.download='receipt-card.json'; a.click();
 };
-document.getElementById('png').onclick = () => {
-  const a = document.createElement('a');
-  a.href = document.getElementById('cv').toDataURL('image/png');
-  a.download = 'receipt-card.png';
-  a.click();
+document.getElementById('png').onclick=()=>{
+  const a=document.createElement('a'); a.href=document.getElementById('cv').toDataURL('image/png');
+  a.download='receipt-card.png'; a.click();
 };
-
-async function loadPay(){
-  const live = document.getElementById('live');
-  try{
-    const cfg = await (await fetch('./payment-config.json',{cache:'no-store'})).json();
-    document.getElementById('eth').textContent = cfg.deposit.ETH;
-    document.getElementById('sol').textContent = cfg.deposit.SOL;
-    live.textContent = 'LIVE for ETH / SOL at ~$1 USD equivalent.';
-    live.className = 'ok';
-  }catch(e){
-    live.textContent = 'payment-config.json missing';
-    live.className = 'warn';
-  }
-}
-loadPay();
-
-document.getElementById('pack').onclick = () => {
-  // zip via multi-file download: emit a JSON manifest + instruct; for pure static, concatenate SVGs into a single HTML pack
-  let body = 'NGL Stamp Pack ($1)\\nAssertion ≠ observation\\n\\n';
-  const files = [];
-  for (const s of STAMPS){
-    const svg = atob(s.svg_b64);
-    files.push('--- FILE: '+s.name+'.svg ---\\n'+svg+'\\n');
-  }
-  const blob = new Blob([body+files.join('\\n')], {type:'text/plain'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'ngl-stamp-pack.txt';
-  a.click();
+document.getElementById('pack').onclick=()=>{
+  let body='NGL Stamp Pack ($1)\n\n';
+  for(const s of STAMPS){ body += '===== '+s.name+'.svg =====\n'+s.svg+'\n\n'; }
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([body],{type:'text/plain'}));
+  a.download='ngl-stamp-pack.txt'; a.click();
 };
 </script>
 </body>
