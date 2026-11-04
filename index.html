@@ -3,78 +3,220 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>$1 Receipt — pay ETH or SOL</title>
+<title>RECEIPT — Prove you said it. $1 stamps.</title>
+<meta name="description" content="Paste anything. Get a SHA-256 receipt card in your browser. $1 stamp pack. No account. No upload."/>
+<meta property="og:title" content="RECEIPT — hash it or it didn't happen"/>
+<meta property="og:description" content="Free browser receipt cards. $1 stamp pack. Pay in ETH or SOL."/>
 <style>
-:root{font-family:system-ui,sans-serif;background:#0b0d10;color:#e8eaed}
-body{max-width:42rem;margin:0 auto;padding:1.25rem;line-height:1.45}
-h1{font-size:1.45rem}
-.muted{color:#9aa3ad;font-size:.92rem}
-textarea{width:100%;min-height:7rem;background:#14181e;color:#eee;border:1px solid #2a3038;border-radius:8px;padding:.75rem;box-sizing:border-box}
-button{background:#2d6a4f;color:#fff;border:0;border-radius:8px;padding:.55rem 1rem;font-weight:600;cursor:pointer;margin:.25rem .25rem 0 0}
-button.sec{background:#2a3038}
-.card{border:1px solid #2a3038;border-radius:12px;padding:1rem;margin:1rem 0;background:#12151a}
-.addr{font-family:ui-monospace,monospace;font-size:.78rem;word-break:break-all;background:#1a1e24;padding:.6rem;border-radius:6px;margin:.35rem 0}
-.ok{color:#8fd6a0}.warn{color:#e6b35a}
-.price{font-size:1.8rem;font-weight:700}
-#out{font-family:ui-monospace,monospace;font-size:.78rem;word-break:break-all;white-space:pre-wrap}
+  :root {
+    --bg: #07090c;
+    --panel: #10141a;
+    --line: #243040;
+    --text: #f1f3f5;
+    --muted: #8b95a5;
+    --green: #3ecf8e;
+    --green-dim: #1a3d2e;
+    --amber: #f0b429;
+    --blue: #5b9fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.45;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+  .eyebrow {
+    display: inline-block; font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--green); border: 1px solid var(--green-dim);
+    padding: 0.25rem 0.5rem; border-radius: 999px; background: #0c1a14;
+  }
+  h1 {
+    font-size: clamp(1.75rem, 5vw, 2.15rem); line-height: 1.1;
+    margin: 0.75rem 0 0.5rem; letter-spacing: -0.03em;
+  }
+  h1 span { color: var(--green); }
+  .lead { color: var(--muted); margin: 0 0 1.25rem; font-size: 1.02rem; }
+  textarea {
+    width: 100%; min-height: 110px; resize: vertical;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 12px;
+    padding: 0.9rem 1rem; font-size: 1rem;
+  }
+  textarea:focus { outline: 2px solid var(--green); border-color: transparent; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+  button, .btn {
+    appearance: none; border: 0; cursor: pointer;
+    font-weight: 700; font-size: 0.95rem;
+    padding: 0.7rem 1.1rem; border-radius: 10px;
+    background: var(--green); color: #04140c;
+  }
+  button.sec, .btn.sec { background: var(--panel); color: var(--text); border: 1px solid var(--line); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .card {
+    margin-top: 1.25rem; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 16px; padding: 1rem;
+  }
+  .card h2 { margin: 0 0 0.35rem; font-size: 1.05rem; }
+  .price-row { display: flex; align-items: baseline; gap: 0.5rem; }
+  .price { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; }
+  .price small { font-size: 1rem; color: var(--muted); font-weight: 600; }
+  .addr {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem; word-break: break-all;
+    background: #0a0c10; border: 1px solid var(--line);
+    border-radius: 8px; padding: 0.65rem; margin: 0.35rem 0;
+  }
+  .pill {
+    display: inline-block; font-size: 0.75rem; font-weight: 700;
+    padding: 0.2rem 0.5rem; border-radius: 6px; margin-right: 0.25rem;
+  }
+  .pill.g { background: var(--green-dim); color: var(--green); }
+  .pill.a { background: #3d2e0c; color: var(--amber); }
+  .muted { color: var(--muted); font-size: 0.88rem; }
+  #out { font-family: ui-monospace, monospace; font-size: 0.72rem; word-break: break-all; white-space: pre-wrap; color: var(--muted); }
+  canvas { width: 100%; border-radius: 12px; margin-top: 0.75rem; border: 1px solid var(--line); }
+  .hooks { margin: 1.25rem 0; padding: 0; list-style: none; }
+  .hooks li {
+    padding: 0.65rem 0; border-bottom: 1px solid var(--line);
+    display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.95rem;
+  }
+  .hooks li::before { content: "✓"; color: var(--green); font-weight: 800; }
+  .sticky {
+    position: sticky; bottom: 0; margin: 1.5rem -1rem -1rem;
+    padding: 0.85rem 1rem; background: linear-gradient(180deg, transparent, #07090c 30%);
+  }
+  .sticky-inner {
+    display: flex; gap: 0.5rem; align-items: center; justify-content: space-between;
+    background: #0e1512; border: 1px solid var(--green-dim); border-radius: 14px; padding: 0.65rem 0.75rem;
+  }
+  .toast {
+    position: fixed; bottom: 5.5rem; left: 50%; transform: translateX(-50%);
+    background: #1a3d2e; color: var(--green); padding: 0.5rem 0.9rem;
+    border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .toast.show { opacity: 1; }
+  footer { margin-top: 2rem; color: var(--muted); font-size: 0.8rem; }
 </style>
 </head>
 <body>
-<p class="muted">ngl-damien · impulse utility · not legal advice</p>
-<h1>Paste text → hash receipt</h1>
-<p class="muted">Free. Runs only in your browser. Nothing is uploaded.</p>
-<textarea id="t" placeholder="Paste any text…"></textarea>
-<div>
-  <button id="go">Make receipt</button>
-  <button class="sec" id="dl" disabled>Download JSON</button>
-  <button class="sec" id="png" disabled>Download PNG</button>
-</div>
-<div class="card" id="card" hidden>
-  <div class="muted">RECEIPT</div>
-  <div id="out"></div>
-  <canvas id="cv" width="640" height="280" style="max-width:100%;margin-top:.75rem;border-radius:8px"></canvas>
+<div class="wrap">
+  <span class="eyebrow">No account · No upload · Instant</span>
+  <h1>If you didn’t <span>hash it</span>, you didn’t say it.</h1>
+  <p class="lead">Paste a message, claim, or draft. Get a receipt card with a SHA-256 fingerprint — in your browser, in one second.</p>
+
+  <textarea id="t" placeholder="Paste the text you want receipted…"></textarea>
+  <div class="actions">
+    <button id="go">Make my receipt</button>
+    <button class="sec" id="png" disabled>Save PNG</button>
+    <button class="sec" id="dl" disabled>Save JSON</button>
+    <button class="sec" id="share" disabled>Copy share text</button>
+  </div>
+
+  <div class="card" id="card" hidden>
+    <span class="pill g">LOCAL ONLY</span>
+    <span class="pill a">NOT LEGAL ADVICE</span>
+    <div id="out"></div>
+    <canvas id="cv" width="720" height="320"></canvas>
+  </div>
+
+  <ul class="hooks">
+    <li>Screenshots lie. Hashes don’t (for the bytes you pasted).</li>
+    <li>Works offline after load. Nothing sent to a server.</li>
+    <li>Stamp the internet with PROPOSED / VERIFIED energy for a buck.</li>
+  </ul>
+
+  <div class="card" id="buy">
+    <div class="price-row">
+      <div class="price">$1 <small>USD-ish</small></div>
+    </div>
+    <h2>Stamp pack — 12 badges</h2>
+    <p class="muted">PROPOSED · VERIFIED · REFUTED · CHECK THE RECEIPT · MODEL SAID SO ≠ PROOF · and more. SVG. Slap on screenshots.</p>
+    <p><strong>Pay ~$1 in ETH or SOL</strong> — funds go to the Founder wallet.</p>
+    <p class="muted">ETH</p>
+    <div class="addr" id="eth">0xf3626482a0013E63F124bfD6897f1b372F2EA883</div>
+    <div class="actions">
+      <button class="sec" type="button" data-copy="0xf3626482a0013E63F124bfD6897f1b372F2EA883">Copy ETH</button>
+    </div>
+    <p class="muted">SOL</p>
+    <div class="addr" id="sol">7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe</div>
+    <div class="actions">
+      <button class="sec" type="button" data-copy="7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe">Copy SOL</button>
+      <button id="pack">Download stamps</button>
+    </div>
+    <p class="muted" style="margin-top:0.75rem">Honor system for v1: pay, then download. BTC/DOGE/LTC need derived receive addresses (xpubs aren’t deposit addresses).</p>
+  </div>
+
+  <footer>
+    Assertion ≠ observation. A hash fingerprints what you pasted — not the truth of the universe.<br/>
+    <a href="https://github.com/ngl-damien/dollar-receipt" style="color:var(--blue)">Source</a>
+  </footer>
 </div>
 
-<div class="card">
-  <div class="price">$1</div>
-  <p>Stamp pack (SVG badges). Pay <strong>~$1 USD</strong> then download.</p>
-  <p><strong>ETH</strong> (send ~$1 equivalent)</p>
-  <div class="addr">0xf3626482a0013E63F124bfD6897f1b372F2EA883</div>
-  <button class="sec" type="button" onclick="navigator.clipboard.writeText('0xf3626482a0013E63F124bfD6897f1b372F2EA883')">Copy ETH</button>
-  <p><strong>SOL</strong></p>
-  <div class="addr">7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe</div>
-  <button class="sec" type="button" onclick="navigator.clipboard.writeText('7vktNwHwUPtotu5o5bD3YKjmMF5P3fdA9dsQbAPCqkYe')">Copy SOL</button>
-  <p class="ok">Payments go to the Founder addresses above.</p>
-  <button id="pack">Download stamp pack</button>
-  <p class="warn muted">BTC/DOGE/LTC xpubs are not receive addresses — use ETH or SOL for now.</p>
+<div class="sticky">
+  <div class="sticky-inner">
+    <div>
+      <strong>$1 stamps</strong>
+      <div class="muted" style="font-size:0.75rem">ETH or SOL · instant download</div>
+    </div>
+    <button type="button" onclick="document.getElementById('buy').scrollIntoView({behavior:'smooth'})">Get pack</button>
+  </div>
 </div>
-<p class="muted">Assertion ≠ observation. A hash is not worldly truth.</p>
+<div class="toast" id="toast">Copied</div>
+
 <script>
-const STAMPS = [{"name": "ASSERTION_NE_OBSERVATION", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#9b6bff\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#9b6bff\">ASSERTION \u2260 OBSERVATION</text>\n</svg>\n"}, {"name": "CHECK_THE_RECEIPT", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#5b8def\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#5b8def\">CHECK THE RECEIPT</text>\n</svg>\n"}, {"name": "HAND_TO_CLIENT", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#2a9d8f\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#2a9d8f\">HAND TO CLIENT</text>\n</svg>\n"}, {"name": "MODEL_SAID_SO", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#666\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#666\">MODEL SAID SO \u2260 PROOF</text>\n</svg>\n"}, {"name": "NO_GAS", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#888\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#888\">NO GAS. JUST GO.</text>\n</svg>\n"}, {"name": "OFFLINE_OK", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#457b9d\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#457b9d\">OFFLINE OK</text>\n</svg>\n"}, {"name": "ONE_DOLLAR_TRUTH", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#e76f51\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#e76f51\">$1 TRUTH UTILITY</text>\n</svg>\n"}, {"name": "PROPOSED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#e6b35a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#e6b35a\">PROPOSED</text>\n</svg>\n"}, {"name": "RECEIPT_REQUIRED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#d4a017\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#d4a017\">RECEIPT REQUIRED</text>\n</svg>\n"}, {"name": "REFUTED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#c44c4c\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#c44c4c\">REFUTED</text>\n</svg>\n"}, {"name": "UNVERIFIABLE", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#7a7a9a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#7a7a9a\">UNVERIFIABLE</text>\n</svg>\n"}, {"name": "VERIFIED", "svg": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"200\" viewBox=\"0 0 640 200\">\n  <rect width=\"640\" height=\"200\" rx=\"16\" fill=\"#0d0f12\"/>\n  <rect x=\"8\" y=\"8\" width=\"624\" height=\"184\" rx=\"12\" fill=\"none\" stroke=\"#3d9a6a\" stroke-width=\"6\"/>\n  <text x=\"320\" y=\"115\" text-anchor=\"middle\" font-family=\"ui-sans-serif,system-ui,sans-serif\" font-size=\"36\" font-weight=\"700\" fill=\"#3d9a6a\">VERIFIED</text>\n</svg>\n"}];
+const STAMPS = [
+  ["PROPOSED","#e6b35a"],["VERIFIED","#3ecf8e"],["REFUTED","#e85d5d"],
+  ["UNVERIFIABLE","#8b95a5"],["CHECK THE RECEIPT","#5b9fff"],
+  ["ASSERTION ≠ OBSERVATION","#b794f6"],["NO GAS. JUST GO.","#a0aec0"],
+  ["RECEIPT REQUIRED","#f0b429"],["MODEL SAID SO ≠ PROOF","#718096"],
+  ["HAND TO CLIENT","#38b2ac"],["OFFLINE OK","#4299e1"],["$1 TRUTH UTILITY","#ed8936"]
+];
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1400);
+}
 async function sha256(text){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 let last=null;
-document.getElementById('go').onclick = async () => {
-  const text = document.getElementById('t').value;
-  const hash = await sha256(text);
-  const at = new Date().toISOString();
-  last = {schema:'ngl.receipt-card.v1', algorithm:'SHA-256', hash, byte_length:new TextEncoder().encode(text).length, at};
+document.getElementById('go').onclick=async()=>{
+  const text=document.getElementById('t').value;
+  if(!text.trim()){ toast('Paste something first'); return; }
+  const hash=await sha256(text);
+  const at=new Date().toISOString();
+  last={schema:'ngl.receipt-card.v1', algorithm:'SHA-256', hash, byte_length:new TextEncoder().encode(text).length, at};
   document.getElementById('card').hidden=false;
-  document.getElementById('out').textContent=JSON.stringify(last,null,2);
+  document.getElementById('out').textContent=hash;
   document.getElementById('dl').disabled=false;
   document.getElementById('png').disabled=false;
+  document.getElementById('share').disabled=false;
   const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
-  ctx.fillStyle='#0d0f12'; ctx.fillRect(0,0,640,280);
-  ctx.strokeStyle='#3d9a6a'; ctx.lineWidth=4; ctx.strokeRect(12,12,616,256);
-  ctx.fillStyle='#8fd6a0'; ctx.font='bold 22px sans-serif'; ctx.fillText('RECEIPT CARD',32,48);
-  ctx.fillStyle='#9aa3ad'; ctx.font='14px monospace'; ctx.fillText(at,32,72);
-  ctx.fillStyle='#e8eaed'; ctx.font='13px monospace';
-  ctx.fillText(hash.slice(0,32),32,120); ctx.fillText(hash.slice(32),32,140);
-  ctx.fillStyle='#9aa3ad'; ctx.font='12px sans-serif';
-  ctx.fillText('SHA-256 · '+last.byte_length+' bytes · local only',32,180);
-  ctx.fillText('Assertion ≠ observation',32,220);
+  // background
+  ctx.fillStyle='#0a0e14'; ctx.fillRect(0,0,720,320);
+  // neon frame
+  ctx.strokeStyle='#3ecf8e'; ctx.lineWidth=5; ctx.strokeRect(16,16,688,288);
+  // header bar
+  ctx.fillStyle='#12261c'; ctx.fillRect(16,16,688,56);
+  ctx.fillStyle='#3ecf8e'; ctx.font='bold 22px system-ui,sans-serif';
+  ctx.fillText('RECEIPT', 36, 52);
+  ctx.fillStyle='#8b95a5'; ctx.font='13px ui-monospace,monospace';
+  ctx.fillText(at.replace('T',' ').replace('Z',' UTC'), 160, 52);
+  // hash
+  ctx.fillStyle='#f1f3f5'; ctx.font='bold 18px ui-monospace,monospace';
+  ctx.fillText(hash.slice(0,32), 36, 130);
+  ctx.fillText(hash.slice(32), 36, 158);
+  // meta
+  ctx.fillStyle='#8b95a5'; ctx.font='14px system-ui,sans-serif';
+  ctx.fillText(last.byte_length + ' bytes  ·  SHA-256  ·  computed locally', 36, 210);
+  ctx.fillStyle='#3ecf8e'; ctx.font='bold 15px system-ui,sans-serif';
+  ctx.fillText('Assertion ≠ observation', 36, 250);
+  ctx.fillStyle='#5a6575'; ctx.font='12px system-ui,sans-serif';
+  ctx.fillText('Not a court document. Fingerprints the paste, not the world.', 36, 278);
+  toast('Receipt ready');
 };
 document.getElementById('dl').onclick=()=>{
   if(!last)return;
@@ -83,15 +225,32 @@ document.getElementById('dl').onclick=()=>{
   a.download='receipt-card.json'; a.click();
 };
 document.getElementById('png').onclick=()=>{
-  const a=document.createElement('a'); a.href=document.getElementById('cv').toDataURL('image/png');
+  const a=document.createElement('a');
+  a.href=document.getElementById('cv').toDataURL('image/png');
   a.download='receipt-card.png'; a.click();
 };
+document.getElementById('share').onclick=async()=>{
+  if(!last)return;
+  const msg=`RECEIPT ${last.hash.slice(0,16)}…\\n${last.at}\\nSHA-256 · ${last.byte_length} bytes\\nAssertion ≠ observation\\nhttps://ngl-damien.github.io/dollar-receipt/`;
+  await navigator.clipboard.writeText(msg);
+  toast('Share text copied');
+};
+document.querySelectorAll('[data-copy]').forEach(btn=>{
+  btn.onclick=async()=>{
+    await navigator.clipboard.writeText(btn.getAttribute('data-copy'));
+    toast('Address copied');
+  };
+});
 document.getElementById('pack').onclick=()=>{
-  let body='NGL Stamp Pack ($1)\n\n';
-  for(const s of STAMPS){ body += '===== '+s.name+'.svg =====\n'+s.svg+'\n\n'; }
+  let body='NGL STAMP PACK ($1)\\nAssertion ≠ observation\\n\\n';
+  for(const [name,color] of STAMPS){
+    body+=`===== ${name.replace(/\\s+/g,'_')}.svg =====\\n`;
+    body+=`<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="640" height="200" viewBox="0 0 640 200"><rect width="640" height="200" rx="16" fill="#0d0f12"/><rect x="8" y="8" width="624" height="184" rx="12" fill="none" stroke="${color}" stroke-width="6"/><text x="320" y="112" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="700" fill="${color}">${name}</text></svg>\\n\\n`;
+  }
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([body],{type:'text/plain'}));
   a.download='ngl-stamp-pack.txt'; a.click();
+  toast('Pack downloading');
 };
 </script>
 </body>
